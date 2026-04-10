@@ -1,5 +1,6 @@
 package com.example.weatherapp.screens.favorites
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -65,10 +67,8 @@ fun FavoriteScreen(
                 }
             }
         }
-
     }
 }
-
 
 @Composable
 fun CityRow(
@@ -76,6 +76,8 @@ fun CityRow(
     navController: NavController,
     favoritesViewModel: FavoritesViewModel
 ) {
+    val context = LocalContext.current
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -116,6 +118,11 @@ fun CityRow(
                 modifier = Modifier
                     .clickable {
                         favoritesViewModel.removeFavorite(favorite)
+                        Toast.makeText(
+                            context,
+                            "Removed ${favorite.city.uppercase()} from Favorites",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     },
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Trash Container",
