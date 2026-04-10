@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="about_app">Bogdan`s WeatherApp v.1.0</string>
+    <string name="api_used">https://api.openweathermap.org</string>
+</resources>
