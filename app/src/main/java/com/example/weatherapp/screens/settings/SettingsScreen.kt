@@ -37,8 +37,6 @@ fun SettingScreen(
     navController: NavController,
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-
-    val unitToggleState = remember { mutableStateOf(false) }
     val measurementUnits = listOf("Imperial (F)", "Metric (C)")
     val choiceFromDb = settingsViewModel.unitsList.collectAsState().value
 
@@ -73,13 +71,12 @@ fun SettingScreen(
                         .padding(bottom = 15.dp)
                 )
                 IconToggleButton(
-                    checked = !unitToggleState.value,
+                    checked = choiceState.value == "Imperial (F)",
                     onCheckedChange = {
-                        unitToggleState.value = !it
-                        if (unitToggleState.value) {
-                            choiceState.value = "Imperial (F)"
-                        } else {
+                        if (choiceState.value == "Imperial (F)") {
                             choiceState.value = "Metric (C)"
+                        } else {
+                            choiceState.value = "Imperial (F)"
                         }
                     },
                     modifier = Modifier
@@ -89,7 +86,7 @@ fun SettingScreen(
                         .background(Color.Magenta.copy(alpha = 0.4f))
                 ) {
                     Text(
-                        text = if (unitToggleState.value) "Fahrenheit °F" else "Celsius °C"
+                        text = if (choiceState.value == "Imperial (F)") "Fahrenheit °F" else "Celsius °C"
                     )
 
                 }
