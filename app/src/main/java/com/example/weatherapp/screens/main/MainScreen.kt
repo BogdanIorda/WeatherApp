@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -52,6 +51,8 @@ fun MainScreen(
 
     val curCity = if (city.isNullOrBlank()) "Austin" else city
 
+    val lastUpdate = mainViewModel.lasUpdateTime.value
+
     val unitFromDb = settingsViewModel.unitsList.collectAsState().value
     val unit = if (unitFromDb.isNotEmpty()) {
         unitFromDb[0].unit.split(" ")[0].lowercase()
@@ -71,7 +72,8 @@ fun MainScreen(
         MainScaffold(
             weather = weatherData.data!!,
             navController = navController,
-            isImperial = isImperial
+            isImperial = isImperial,
+            updateTime = lastUpdate
         )
     }
 }
@@ -82,7 +84,8 @@ fun MainScreen(
 fun MainScaffold(
     weather: WeatherObject,
     navController: NavController,
-    isImperial: Boolean
+    isImperial: Boolean,
+    updateTime: String
 ) {
     Scaffold(
         topBar = {
@@ -98,20 +101,23 @@ fun MainScaffold(
             }
         }) { innerPadding ->
         Surface(modifier = Modifier.padding(innerPadding)) {
-            MainContent(data = weather, isImperial = isImperial)
+            MainContent(
+                data = weather,
+                isImperial = isImperial,
+                updateTime = updateTime
+            )
         }
     }
 }
 
 @Composable
-fun MainContent(data: WeatherObject, isImperial: Boolean) {
+fun MainContent(data: WeatherObject, isImperial: Boolean, updateTime: String) {
 
     val weatherItem = data.list[0]
     val currentDayImageUrl = "https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}.png"
     val date = formatDate(weatherItem.dt)
     val dayTemp = formateDecimals(weatherItem.temp.day)
     val weather = weatherItem.weather[0].main
-
 
     Column(
         modifier = Modifier
@@ -133,7 +139,7 @@ fun MainContent(data: WeatherObject, isImperial: Boolean) {
                 .padding(4.dp)
                 .size(200.dp),
             shape = CircleShape,
-            color = Color(0xFFFFCE28)
+            color = Color(0xFFFFC61C)
         ) {
             Column(
                 modifier = Modifier
@@ -169,13 +175,19 @@ fun MainContent(data: WeatherObject, isImperial: Boolean) {
 
         SunSetSunRise(weather = weatherItem)
 
-        Row(
+        Column(
             modifier = Modifier
                 .padding(top = 30.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(text = "This Week")
+
+            Text(
+                text = "Last updated: $updateTime",
+                fontWeight = FontWeight.Thin
+            )
         }
 
         Surface(

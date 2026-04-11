@@ -1,5 +1,6 @@
 package com.example.weatherapp.screens.main
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import com.example.weatherapp.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 import javax.inject.Inject
 
 
@@ -25,6 +28,9 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
             DataOrException(null, true, Exception(""))
         )
 
+    var lasUpdateTime: MutableState<String> = mutableStateOf("")
+
+    @SuppressLint("SimpleDateFormat")
     fun getWeather(city: String, units: String) {
         viewModelScope.launch {
 
@@ -41,6 +47,11 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
                 response.loading = false
 
                 data.value = response
+
+                val currentTime = SimpleDateFormat("hh:mm a").format(Date())
+
+                lasUpdateTime.value = currentTime
+
             }
         }
     }
