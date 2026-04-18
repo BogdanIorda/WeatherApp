@@ -112,7 +112,6 @@ fun MainScaffold(
 
 @Composable
 fun MainContent(data: WeatherObject, isImperial: Boolean, updateTime: String) {
-
     val weatherItem = data.list[0]
     val currentDayImageUrl = "https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}.png"
     val date = formatDate(weatherItem.dt)

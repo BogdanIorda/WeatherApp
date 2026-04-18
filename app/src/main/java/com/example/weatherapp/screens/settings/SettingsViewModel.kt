@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.model.Unit
 import com.example.weatherapp.repository.WeatherDbRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,9 +16,10 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(private val settingsRepository: WeatherDbRepository) :
     ViewModel() {
 
-    private val _unitsList = MutableStateFlow<List<Unit>>(emptyList())
 
-    val unitsList = _unitsList.asStateFlow()
+    /*
+private val _unitsList = MutableStateFlow<List<Unit>>(emptyList())
+val unitsList = _unitsList.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -27,6 +28,14 @@ class SettingsViewModel @Inject constructor(private val settingsRepository: Weat
             }
         }
     }
+*/
+    val unitsList = settingsRepository.getAllUnits()
+        .distinctUntilChanged()
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
 
 
     fun addUnit(unit: Unit) =
